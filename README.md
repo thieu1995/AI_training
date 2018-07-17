@@ -5,3 +5,6 @@
 - Không up những file không phải code như những file rác tạo ra bởi các IDEA Editor. Nếu file nào không muốn up thì phải thêm đường dẫn tới nó vào file gitignore.
 - Trong đây chỉ được phép chứa code python, không java hay ngôn ngữ khác.
 
+- Mỗi lần đẩy code lên phải : git pull trước để xem có ai khác đẩy code của họ lên chưa.
+Nếu không pull về sẽ không thể đẩy lên được.
+
