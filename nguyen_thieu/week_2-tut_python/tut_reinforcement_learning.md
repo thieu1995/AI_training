@@ -1,5 +1,6 @@
 # Reinforcement Learning
 
+```youtrack
 Week 1    Introduction
 Week 2    Bandit algorithms – UCB, PAC
 Week 3    Bandit algorithms –Median Elimination, Policy Gradient
@@ -12,8 +13,10 @@ Week 9    Least Squares Methods
 Week 10  Fitted Q, DQN & Policy Gradient for Full RL
 Week 11  Hierarchical RL
 Week 12  POMDPs
+```
 
-
+## Links course:
+```youtrack
 http://www.wildml.com/2018/02/introduction-to-learning-to-trade-with-reinforcement-learning/
 
 https://towardsdatascience.com/introduction-to-various-reinforcement-learning-algorithms-i-q-learning-sarsa-dqn-ddpg-72a5e0cb6287
@@ -34,6 +37,16 @@ https://www.oreilly.com/ideas/reinforcement-learning-with-tensorflow
 http://pytorch.org/tutorials/intermediate/reinforcement_q_learning.html
 
 https://www.youtube.com/user/CS188Spring2013
+```
 
-Sách : http://incompleteideas.net/book/bookdraft2017nov5.pdf
+
+## Books:
+```youtrack
+    http://incompleteideas.net/book/bookdraft2017nov5.pdf
+```
+
+
+
+
+
 
