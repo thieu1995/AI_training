@@ -1,0 +1,86 @@
+Chapter I: đoạn code khó hiểu
+
+def uniform_random_mutation(self):
+        for solution in self.pop:  
+            for gene in solution:
+                r = random.random()
+                if( r < self.chance_of_mutation ):
+                    print("------------start mutation")
+                    print(solution)
+                    gene = int(random.random()*30)
+                    print("-----end mutation-------")
+                    print(solution)
+                    print("----------------------")
+## khi chay ham tren :
+gene thay doi thi solution ko he thay doi
+
+------------start mutation
+[7, 23, 12, 18]
+-----end mutation-------
+[7, 23, 12, 18]
+
+Sửa lại hàm trên 1 chút 
+def uniform_random_mutation(self):
+        for solution in self.pop:  
+            for i in range(len(solution)):
+                r = random.random()
+                if( r < self.chance_of_mutation ):
+                    print("------------start mutation")
+                    print(solution)
+                    solution[i] = int(random.random()*30)
+                    print("-----end mutation-------")
+                    print(solution)
+                    print("----------------------")
+Thi no se chay ok:
+------------start mutation
+[21, 23, 16, 22]
+-----end mutation-------
+[21, 23, 16, 0]
+
+Chua giai thich duoc 
+
+Chapter 2: Lý do kỳ lạ 
+
+Khi để chance_of_mutation = 0 , với dân số khởi tạo ít  thì chỉ sau 1 số generation đủ lớn 
+tất cả các solution sẽ giống nhau vì chẳng qua nó crossover cho nhau ( tìm cách khắc phục điểm này)
+
+
+Nhìn vào đây sẽ thấy chỉ cần đến gen 14 đã có rất nhiều solution gần giống nhau
+
+gen =  0
+[[10, 4, 15, 12], [10, 16, 4, 17], [17, 2, 15, 12], [26, 7, 11, 7], [28, 11, 3, 21], [11, 20, 11, 0]]
+solution has min: [11, 20, 11, 0]
+
+gen =  5
+[[10, 4, 15, 0], [10, 4, 15, 12], [10, 16, 15, 0], [10, 4, 4, 17], [10, 4, 4, 17], [10, 4, 3, 21]]
+solution has min: [10, 4, 15, 0]
+
+gen =  14
+[[10, 4, 4, 17], [10, 4, 15, 12], [10, 4, 4, 12], [10, 4, 15, 21], [10, 4, 15, 21], [10, 4, 15, 12]]
+solution has min: [10, 4, 4, 12]
+
+Đến đây thì các nghiệm giống nhau hết
+
+gen =  20
+[[10, 4, 15, 12], [10, 4, 15, 12], [10, 4, 15, 12], [10, 4, 15, 12], [10, 4, 15, 12], [10, 4, 15, 21]]
+solution has min: [10, 4, 15, 12]
+
+
+Chapter 3 : Tổng kết
+
+weight = 1,2,3,4
+target = 30
+(a+2b+3c+4d -30 = 0)
+size_pop = 6
+chance_of_mutation = 0.1
+0<=a,b,c,d<=30
+selection_percent = 50%
+tìm dc nghiệm trong 
+----------------------
+gen =  360
+[[11, 2, 6, 3], [11, 13, 29, 9], [26, 2, 0, 0], [26, 19, 0, 7], [14, 2, 2, 17], [17, 0, 8, 28]]
+solution has min: [26, 2, 0, 0]
+min of this res 0 min res 0
+
+
+

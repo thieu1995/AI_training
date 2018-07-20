@@ -26,7 +26,7 @@ def evaluation(pop):
     sort_pop = sorted(pop_perf.items(),key=operator.itemgetter(0),reverse=True)
 
     return prob
-def selectionOne(pop,prob):
+def  proportionalSelection(pop,prob):
     i = 0
     r = random.random()
     #cul = []
@@ -41,10 +41,14 @@ def selectionOne(pop,prob):
     
     #print(cul)
     #for()
+def randomSelection(pop):
+    return pop[int(random.random()*len(pop))]
+def tournamentSelection(pop,prob):
+    return 0
 def selectParent(pop,prob):
     parents_index = []
     for i in range(int(size_pop/2)):
-        parents_index.append(selectionOne(pop,prob))
+        parents_index.append(proportionalSelection(pop,prob))
     return parents_index
 def createChild(parent1,parent2):
      r = int(random.random()*len(parent1))
