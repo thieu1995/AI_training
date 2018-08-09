@@ -82,5 +82,39 @@ gen =  360
 solution has min: [26, 2, 0, 0]
 min of this res 0 min res 0
 
+Chapter 4: ngoai truyen
+thanh cong
+def sortPop(self):
+        pop_dict = {}
+        print("pop_size",self.pop_size)
+        for i in range(self.pop_size):
+            pop_dict[self.prob[i]] = str(i)
+            print("prob va i",self.prob[i],i)
+            #print(pop_dict[i])
 
 
+pop_dict 10
+{0.03909487501127792: '0', 0.09318504454742955: '1', 0.05398816072985998: '2', 0.13882669901963995: '3', 0.07236710906342933: '4', 0.05864231251691688: '5', 0.06298618751816998: '6', 0.05442006601569886: '7', 0.30920492054374354: '8', 0.11728462503383376: '9'}
+
+that bai
+def sortPop(self):
+        pop_dict = {}
+        print("pop_size",self.pop_size)
+        for i in range(self.pop_size):
+            pop_dict[self.prob[i]] = i
+            print("prob va i",self.prob[i],i)
+            #print(pop_dict[i])
+'pop_dict 8
+{0.067522663398828: 0, 0.05609575113133403: 4, 0.08382123732268304: 2, 0.101283995098242: 5, 0.3646223823536712: 6, 0.063968839009416: 7, 0.08479590287294679: 8, 0.06569772655021103: 9}
+
+thanh cong
+def sortPop(self):
+        pop_dict = {}
+        print("pop_size",self.pop_size)
+        for i in range(self.pop_size):
+            pop_dict[i] = self.prob[i]
+            print("prob va i",self.prob[i],i)
+            #print(pop_dict[i])
+
+pop_dict 10
+{0: 0.13225936520563336, 1: 0.08943252313904733, 2: 0.08384299044285685, 3: 0.09116907698640746, 4: 0.09116907698640746, 5: 0.14446792199384567, 6: 0.08310101707610591, 7: 0.12038993499487138, 8: 0.10319137285274692, 9: 0.060976720322077724}
