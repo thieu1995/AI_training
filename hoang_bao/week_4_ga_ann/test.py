@@ -52,8 +52,8 @@ hid2_dimension = 5
 out_dimension = 1 # output layer
 
 #xac dinh cac thong so de train
-num_generation = 650
-pop_len = 150
+num_generation = 600
+pop_len = 100
 
 #khoi tao do dai cua moi solution
 
@@ -184,22 +184,7 @@ def calculate_accuracy(A,Y):
     return np.sum(np.abs(np.subtract(A,Y)))/len(A)
 
 # ham de dua mang ve dang ban dau(chua chuan hoa)
-def denormalize(A,max1,min1):-------------
-min loss is : 0.08824552486924671
-------------stop generation:  45 --------------
----------------start generation: 46 ----------
---------------------------------
-min loss is : 0.05042339246362009
-------------stop generation:  46 --------------
----------------start generation: 47 ----------
---------------------------------
-min loss is : 0.04786096549518149
-------------stop generation:  47 --------------
----------------start generation: 48 ----------
---------------------------------
-min loss is : 0.07008304860967476
-------------stop generation:  48 --------------
----------------start generation: 49 ----
+def denormalize(A,max1,min1):
     B = A*(max1-min1)+min1
     for i in range(len(A)):
         A[i] = A[i]*(max1-min1) + min1
@@ -213,4 +198,5 @@ print(calculate_accuracy(res,Y_test))
 
 plt.plot(range(test_size),res,color = 'r',label = 'pred')
 plt.plot(range(test_size),Y_test,color = 'b',label = 'output')
-plt.show()
+# plt.show()
+plt.savefig("hinh1.pdf")
