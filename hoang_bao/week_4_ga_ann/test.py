@@ -1,8 +1,8 @@
 import pandas as pd 
 import numpy as np 
 import matplotlib.pyplot as plt
-from GANN import GANN
-
+from GA import GANN
+import operator
 
 
 #file data 
@@ -48,24 +48,20 @@ for i in range(train_size -1,len(cpu)-1):
 sliding = [1]
 in_dimension = 2 # input dimensions = 2 vi vector dau vao gom cpu va mem usage
 hid1_dimension = 5 # hidden layer 
+hid2_dimension = 5
 out_dimension = 1 # output layer
 
 #xac dinh cac thong so de train
-num_generation = 100
-pop_len = 20
-pop = []
+num_generation = 650
+pop_len = 150
 
 #khoi tao do dai cua moi solution
 
-
-solution_len = in_dimension*hid1_dimension + hid1_dimension + hid1_dimension*out_dimension + out_dimension
+solution_len = in_dimension*hid1_dimension + hid1_dimension + hid1_dimension*hid2_dimension + hid2_dimension + hid2_dimension*out_dimension + out_dimension
 
 #tao first geneartion
-
-for i in range(pop_len):
-    t = np.random.randn(solution_len)
-    pop.append(t)
-
+#pop = [ ( x = (np.random.uniform(-1,1) for _ in range(0, solution_len)), fitness(x)) for __ in range(0, pop_len) ]
+pop = [[np.random.uniform(-1,1) for _ in range(0,solution_len)] for __ in range(0,pop_len)]
 #tao loss function
 def loss_function(X,Y):
     """
@@ -79,53 +75,83 @@ def loss_function(X,Y):
 #ham de chuyen solution sang cac ma tran trong so
 def solution_to_weights(solution):
     t1 = in_dimension*hid1_dimension # chieu cho w1
-    t2 = hid1_dimension*out_dimension # chieu cho w2
+    t2 = hid1_dimension*hid2_dimension # chieu cho w2
+    t3 = hid2_dimension*out_dimension # chieu cho w3
 
     w1 = solution[:t1] # tach w1 
     b1 = solution[t1:t1+hid1_dimension] # tach b1
     
     w2 = solution[t1+hid1_dimension:t1+hid1_dimension+t2] #tach w2
-    b2 = solution[t1+hid1_dimension+t2:] #tach b2
+    b2 = solution[t1+hid1_dimension+t2:t1+hid1_dimension+t2+hid2_dimension] #tach b2
     
+    w3 = solution[t1+hid1_dimension+t2+hid2_dimension:t1+hid1_dimension+t2+hid2_dimension+t3]
+    b3 = solution[t1+hid1_dimension+t2+hid2_dimension+t3:]
+
     w1 = np.reshape(w1,(in_dimension,hid1_dimension)) #reshape lai 
-    w2 = np.reshape(w2,(hid1_dimension,out_dimension)) #rehape lai 
-    
-    return w1,b1,w2,b2
+    w2 = np.reshape(w2,(hid1_dimension,hid2_dimension)) #rehape lai 
+    w3 = np.reshape(w3,(hid2_dimension,out_dimension))
+  #  print("w3k l",w3.shape)
+    return w1,b1,w2,b2,w3,b3
 
 #Khoi tao ga 
-ga = GANN(solution_len = solution_len,pop_len = pop_len)
+ga = GANN( solution_len, pop_len,0.025,0.8)
 min_loss = 100
 
+def itself(x):
+    return x
+def elu(x, alpha=1):
+    return np.where(x < 0, alpha * (np.exp(x) - 1), x)
+def relu(x):
+    return np.maximum(0, x)
+def tanh(x):
+    return np.tanh(x)
+def sigmoid(x):
+    return 1.0 / (1.0 + np.exp(-x))
+
+
 # ham de tinh gia tri feed for word
-def feedforward(X,Y,W1,b1,W2,b2):
+def feedforward(X,Y,W1,b1,W2,b2,W3,b3):
     Z1 = np.dot(X,W1) + b1 # Ma tran train [300,2]* [2,5] ma tran input-hidden1 = [300,5]
-    A1 = np.maximum(Z1,0) # ham relu 
-    Z2 = np.dot(A1,W2) + b2 # [300,5]*[5,1] = [300,1] 
+   # print("Z1:",Z1.shape)
+    A1 = elu(Z1)
+    #A1 = np.maximum(Z1,0) # ham relu 
+    Z2 = np.dot(A1,W2) + b2 # [300,5]*[5,5] = [300,5] 
                                  # 300 out put cpu , cpu[1] dung de du doan cpu[2]
-  #  print(Z2)
+  #  print(Z2)                 [300,5]*[5,1] = [300.1]
+   # print("Z2:",Z2.shape)
+    #A2 = np.maximum(Z2,0) # relu
+
+    A2 = elu(Z2)
+
+    Z3 = np.dot(A2,W3) + b3
+  #  print("Z3:",Z3.shape)
+    #A3 = np.maximum(Z3,0)
+    A3 = elu(Z3)
     
-    A2 = np.maximum(Z2,0) # relu
+    t = loss_function(A3,Y) # tinh loss 
     
-    t = loss_function(A2,Y) # tinh loss 
-    
-    return t,A2
+    return t,A3
 
 # ham de predict sau khi da co dc cac bo trong so w1,b1,w2,b2 tot nhat
-def predict(W1,b1,W2,b2):
-    t,res = feedforward(X_test,Y_test,W1,b1,W2,b2)
+def predict(W1,b1,W2,b2,W3,b3):
+    t,res = feedforward(X_test,Y_test,W1,b1,W2,b2,W3,b3)
    # print("y_test",len(Y_test))
     #print("res",res)
     
     return t,res
+
+sorted_pop = sorted(pop, key = operator.itemgetter(1))
 
 #---------------------------BAT DAU CHAY THUAT TOAN-------------
 for i in range(num_generation):
     loss =  []
     print("---------------start generation:",i,"----------")
     for j in range(len(pop)):
-        W1,b1,W2,b2 = solution_to_weights(pop[j]) # chuyen tu solution sang cac dang cac matran va mang
+        W1,b1,W2,b2,W3,b3 = solution_to_weights(pop[j]) # chuyen tu solution sang cac dang cac matran va mang
         #feedforward
-        t,A2 = feedforward(X_train,Y_train,W1,b1,W2,b2)
+       
+       
+        t,A2 = feedforward(X_train,Y_train,W1,b1,W2,b2,W3,b3)
         loss.append(t)
         if(t < min_loss) :
             #muc dich de luu lai cac w1,b1,w2,b2 cua solution tot nhat
@@ -134,6 +160,8 @@ for i in range(num_generation):
             b1_final = b1
             W2_final = W2 
             b2_final = b2
+            W3_final = W3
+            b3_final = b3
     #    print("solution ",j," in generation ",i, "has loss:", t)
     
     print("--------------------------------")
@@ -142,10 +170,11 @@ for i in range(num_generation):
     print("------------stop generation: ",i,"--------------")
     #chay ga o buoc nay
     pop = ga.evolve(pop,loss)
+   # print("afdlakfjl:",pop)
 
 
 #du doan sau khi train xong
-t,res = predict (W1_final,b1_final,W2_final,b2_final)
+t,res = predict (W1_final,b1_final,W2_final,b2_final,W3_final,b3_final)
 
 res = np.reshape(res,-1)
 
@@ -155,7 +184,22 @@ def calculate_accuracy(A,Y):
     return np.sum(np.abs(np.subtract(A,Y)))/len(A)
 
 # ham de dua mang ve dang ban dau(chua chuan hoa)
-def denormalize(A,max1,min1):
+def denormalize(A,max1,min1):-------------
+min loss is : 0.08824552486924671
+------------stop generation:  45 --------------
+---------------start generation: 46 ----------
+--------------------------------
+min loss is : 0.05042339246362009
+------------stop generation:  46 --------------
+---------------start generation: 47 ----------
+--------------------------------
+min loss is : 0.04786096549518149
+------------stop generation:  47 --------------
+---------------start generation: 48 ----------
+--------------------------------
+min loss is : 0.07008304860967476
+------------stop generation:  48 --------------
+---------------start generation: 49 ----
     B = A*(max1-min1)+min1
     for i in range(len(A)):
         A[i] = A[i]*(max1-min1) + min1

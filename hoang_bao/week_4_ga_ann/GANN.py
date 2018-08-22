@@ -4,15 +4,15 @@ import random
 import time
 
 class GANN(object):
-    def __init__(self,solution_len,pop_len,muatation_chance = 0.1, selection_percent = 0.8):
+    def __init__(self,solution_len,pop_len,muatation_chance = None, selection_percent = None):
         self.muatation_chance = muatation_chance
         self.selection_percent = selection_percent
         self.sol_len = solution_len
         self.pop_len = pop_len
         self.number_selected = int(selection_percent*pop_len)
         self.number_unselected = pop_len - self.number_selected
-        
-    def evaluate(self):
+        # self.prob = []
+    def evaluate(self,prob):
         # ham tinh xac suat moi thang dc chon
         prob = []
         fit = []
@@ -26,9 +26,9 @@ class GANN(object):
         # prob[i] = fit[i] / tong cac fitness
         for i in range(self.pop_len):
             t = fit[i]/sum_fit
-            prob.append(t)
+            self.prob.append(t)
       #  print("prob :",prob)
-        return prob
+        return self.prob
     
     def select(self,prob_to_choose):
         selected_index = []
@@ -51,8 +51,10 @@ class GANN(object):
         
         r = random.randint(1,self.pop_len)
     
-        new_child = child1[:r]+child2[r:]
-        return new_child
+        new_child1 = child1[:r] + child2[r:]
+        new_child2 = child2[:r] + child1[r:]
+
+        return new_child1,new_child2
 
     def cross_over(self,selected_indexs,unselected_indexs):
         new_pop = []
@@ -76,15 +78,15 @@ class GANN(object):
                 new_pop.append(self.pop[i])
         return new_pop
 
-    def proportionSelect(self,prob):      
+    def proportionSelect(self):      
         i = 0
         r = random.random()
-        sum = prob[i]
+        sum = self.prob[i]
         while sum < r :
             i = i + 1
         #  print("i=",i)
         # print("sum=",sum)
-            sum = sum + prob[i]
+            sum = sum + self.prob[i]
         return i  
 
     def muatation(self):
@@ -92,7 +94,7 @@ class GANN(object):
             for i in range(len(solution)):
                 r = random.randint(0,len(solution))
                 if r < self.muatation_chance:
-                    solution[i] = random.random()
+                    solution[i] = np.random.uniform(-1,1)
     
 
     def evolve(self,pop,loss):
@@ -124,10 +126,27 @@ class GANN(object):
        
         for i in range(len(rank)):
             prob[rank[i]] =  i/sum_rank
-        k = self.proportionSelect(prob)
+        k = self.proportionSelect()
         return k
+    def cross_over_right(self):
+        """
+        chon ra 2 ca the p1,p2
+        sau chon ra 1 so ngau nhien neu < pc thi cho lai tao sinh ra c1,c2
+        neu khong thi de nguyen 
+        """
+        parent1 = self.proportionSelect()
+        parent2 = self.proportionSelect()
 
+    def proportion_select_fast(self):
+        i = self.proportionSelect()
 
-
-
-    
+    # numpy co cac ham random choice cua numpy va python deu co the cho xs lua chon cac phan tu nhieu 
+    # hay it  <=> proportional selection
+    # cach de hieu nhanh nhat 1 thuat toan va cac van de lien quan la implement no
+    # luc doc ga trong computational intelligence : eo hieu cai me gi
+    # sau khi da implement dc ga: nhan ra rat nhieu van de => doc lai thay dung 
+    # cac van de ho de cap và 1 so cach giai quyet
+    # luc cross over thi co 2 van de minh da mac phai :
+    # 1) mot ca the co the dc chon hai lan de lai tao => con sinh ra ko thay doi
+    # 2) mot ca the co the dc chon de cap vs nhieu ca the khac => cac con sinh ra giong nhau rat nhieu
+    # dac biet la khi su dung proportional select schemed  
