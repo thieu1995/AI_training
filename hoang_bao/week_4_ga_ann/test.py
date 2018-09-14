@@ -37,23 +37,23 @@ Y_test = cpu[train_size:] # y_test thi lay luon cpu[train_size:] ko can chuan ho
 
 # X_train[i] gom cpu_nor[i] va mem norm[i]
 for i in range(train_size-1):
-   X_train.append([cpu_normalized[i],mem_normalized[i]])
+   X_train.append([cpu_normalized[i]])
    Y_train.append(cpu_normalized[i+1])
 
 for i in range(train_size -1,len(cpu)-1):
-    X_test.append([cpu_normalized[i],mem_normalized[i]])
+    X_test.append([cpu_normalized[i]])
     
 # xac dinh cac thong so cua mang neural
 
 sliding = [1]
-in_dimension = 2 # input dimensions = 2 vi vector dau vao gom cpu va mem usage
+in_dimension = 1 # input dimensions = 2 vi vector dau vao gom cpu va mem usage
 hid1_dimension = 5 # hidden layer 
-hid2_dimension = 5
+hid2_dimension = 4
 out_dimension = 1 # output layer
 
 #xac dinh cac thong so de train
-num_generation = 600
-pop_len = 100
+num_generation = 40
+pop_len = 50
 
 #khoi tao do dai cua moi solution
 
@@ -195,8 +195,8 @@ res = denormalize(res,max(cpu),min(cpu))
 #tinh MAE
 print(calculate_accuracy(res,Y_test))
 
-
-plt.plot(range(test_size),res,color = 'r',label = 'pred')
 plt.plot(range(test_size),Y_test,color = 'b',label = 'output')
-# plt.show()
-plt.savefig("hinh1.pdf")
+plt.plot(range(test_size),res,color = 'r',label = 'pred')
+
+plt.show()
+# plt.savefig("hinh1.pdf")

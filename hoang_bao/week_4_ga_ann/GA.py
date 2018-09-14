@@ -13,8 +13,8 @@ class GANN(object):
     def fitness_cal(self):
         
         for i in range(self.pop_len):
-            self.fitness.append(1/(1+self.loss[i]))
-        return self.fitness
+            self.fitness.append(1/(self.loss[i]))
+        return self.fitness,sum(self.fitness)
     
     def evaluate(self,fitness):
        # print(4)
@@ -41,11 +41,25 @@ class GANN(object):
             sum = sum + prob[i]
         #print("i = ",i)
         return i  
+    def get_index_roulette_wheel_selection(self, list_fitness, sum_fitness):
+        r = np.random.uniform(low=0, high=sum_fitness)
+        for idx, f in enumerate(list_fitness):
+            r = r + f
+            if r > sum_fitness:
+                return idx
+
     def cross_over_pair(self):
        # print("1")
-        parent1 = self.proportional_selection(self.fitness)
-        parent2 = self.proportional_selection(self.fitness)
+        #parent1 = np.random.choice(range(len(self.fitness)))#self.proportional_selection(self.fitness) 
+        #parent2 = np.random.choice(range(len(self.fitness)))#self.proportional_selection(self.fitness)
         #print("2")
+        parent1 = self.get_index_roulette_wheel_selection(self.fitness,sum(self.fitness))
+        #print("---------------------------)
+       # print("parent 1",parent1)
+        
+        parent2 = self.get_index_roulette_wheel_selection(self.fitness,sum(self.fitness))
+       # print("parent 2",parent2)
+      #  print("---------------------------")
         while parent2 == parent1:
             parent2 = self.proportional_selection(self.fitness)
         
@@ -86,3 +100,5 @@ class GANN(object):
         self.fitness_cal()
         self.cross_over()
         return self.new_pop
+
+    
