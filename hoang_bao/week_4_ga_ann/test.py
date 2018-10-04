@@ -37,11 +37,11 @@ Y_test = cpu[train_size:] # y_test thi lay luon cpu[train_size:] ko can chuan ho
 
 # X_train[i] gom cpu_nor[i] va mem norm[i]
 for i in range(train_size-1):
-   X_train.append([cpu_normalized[i]])
+   X_train.append([cpu_normalized[i],mem_normalized[i]])
    Y_train.append(cpu_normalized[i+1])
 
 for i in range(train_size -1,len(cpu)-1):
-    X_test.append([cpu_normalized[i]])
+    X_test.append([cpu_normalized[i],mem_normalized[i]])
     
 # xac dinh cac thong so cua mang neural
 
