@@ -2,6 +2,9 @@ import torch
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+from DE import DifferentialEvolution
+from GA import  GeneticAlgorithm
+import time
 def update_weights(xfunc,weights,learning_rate,error):
     for i in range(len(weights)):
         weight_change = learning_rate*xfunc[i]*error
@@ -41,24 +44,56 @@ def sigmoid(x):
 def FLNN(X_train,Y_train):
     MAE = 0 
     RMSE = 0
-    learning_rate = 0.01
+    learning_rate = 0.025
     weights = np.random.uniform(-0.5,0.5,10)
     print("w:",weights)
-    epochs = 2000
+    epochs = 200
     #1000 epochs , moi epocs se chay tung diem trong tap x_train va cap nhat trong so
     error = 0
     for i in range(epochs):
+        SE = 0
+        mx = []
         for train_index in range(len(X_train)):
             xfunc,output = feed_forward(X_train[train_index],weights)
             error = Y_train[train_index] - output 
+            mx.append(error)
+            SE = SE + np.square(error) 
             weights = update_weights(xfunc,weights,learning_rate,error)
-            #print("error at train index",train_index," in epochs ",i,"is",error)   
-        print("epoch: ",i," ---error : ",error)    
-
+            #print("error at train index",train_index," in epochs ",i,"is",error)  
+            # 
+      #  print("epoch: ",i," ---error : ",SE/len(X_train))    
+        print("recal mse:",np.mean(np.square(mx)))
+    print("best ",weights)
     return weights
+def FLNN_DE(X_train,Y_train):
+    MAE = 0 
+    RMSE = 0
+    problem_size = 10
+    lower  = -0.5
+    upper  = 0.5
+    search_space  = [[lower,upper] for i in range(problem_size)]
+    max_gens = 500
+    pop_size = 15*problem_size 
+    weightf = 0.5
+    crossf = 0.5    
+    DE = DifferentialEvolution(X_train,Y_train)
+    best_weight =  DE.search(max_gens,search_space,pop_size,weightf,crossf)
+    return best_weight[0]
+
+def FLNN_GA(X_train,Y_train):
+    problem_size = 10
+    pop_size = 10*problem_size
+    max_gens = 20
+    search_space = [[-0.5,0.5] for _ in range(problem_size)]
+    crossf = 0.9
+    mutationf = 0.005
+    
+    GA = GeneticAlgorithm(problem_size,pop_size,max_gens,search_space,mutationf,crossf,X_train,Y_train)
+    best = GA.search()
+    return best[0]
+
 def predict(X_test,weights):
     Y_predict = [relu(feed_forward(X_test[i],weights)[1]) for i in range(len(X_test))]
-
     return Y_predict
 
 def feed_forward(train_data,weights):
@@ -98,7 +133,10 @@ if __name__ == "__main__":
     for i in range(train_size -1,len(cpu)-1):
         X_test.append([cpu_normalized[i],mem_normalized[i]])
         #Y_test.append([cpu_normalized[i+1]])
-    weights  = FLNN(X_train,Y_train)
+    start_time = time.clock()    
+    weights  = FLNN_DE(X_train,Y_train)
+    end_time = time.clock()
+    print("execution time", end_time-start_time)
     Y_predict = predict(X_test,weights)
    # print("Y_predict",Y_predict,"len pre",len(Y_predict))
     Y_predict = denormalize(Y_predict,max(cpu),min(cpu))
@@ -107,7 +145,7 @@ if __name__ == "__main__":
     MAE2= np.sum(np.abs(np.subtract(Y_predict,Y_test)))/len(Y_predict)
     str1 = 'RMSE' + str(RMSE)
     str2 = 'MAE' + str(MAE)
-    with open("./result/flnn_res_2000_epoch_001.csv","w") as f:
+    with open("./result/de_flnn_res_ram_200_epoch_05_05.csv","w") as f:
         for i in range(len(Y_predict)):
             f.write(str(Y_predict[i])+","+str(Y_test[i])+"\n")
         f.write(str(RMSE)+","+str(MAE))

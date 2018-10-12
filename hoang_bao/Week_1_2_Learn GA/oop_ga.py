@@ -40,7 +40,7 @@ class GA:
         # tao ngau nhien loi giai
         pop = []
         for j in range(self.pop_size):
-          pop.append([int(random.random()*m + constraints[0]) for i in range(self.num_of_var) ])
+          pop.append([int(random.random()*m + constraints[0]) for i in range(self.num_of_var)])
         return pop
 
     def evaluation(self):

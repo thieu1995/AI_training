@@ -94,7 +94,7 @@ def solution_to_weights(solution):
     return w1,b1,w2,b2,w3,b3
 
 #Khoi tao ga 
-ga = GANN( solution_len, pop_len,0.025,0.8)
+ga = GANN( solution_len, pop_len,0.0025,0.9)
 min_loss = 100
 
 def itself(x):
