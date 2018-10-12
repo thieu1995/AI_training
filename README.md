@@ -20,6 +20,6 @@ Nếu không pull về sẽ không thể đẩy lên được.
 - anh_duc             anhduc2203      Vũ đức 
 - pham_viet_cuong     VP1927          Phạm Việt Cường
 - tran_minh_dung      dunghustk60     Trần Minh Dũng 
-
+- lanh_khanh          lanhkhanh118    Lành Khánh 
 
 
