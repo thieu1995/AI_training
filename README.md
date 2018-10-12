@@ -8,3 +8,18 @@
 - Mỗi lần đẩy code lên phải : git pull trước để xem có ai khác đẩy code của họ lên chưa.
 Nếu không pull về sẽ không thể đẩy lên được.
 
+#### Members 
+nguyenthieu95   nguyễn văn thiệu 
+hoangbao123     hoàng nghĩa bảo 
+huytr225        trần huy 
+haok61bkhn      hoàng quốc hảo 
+sad1503         trần vũ đức 
+anhtuhsp        nguyễn anh tú 
+tienthegainz    hà việt tiến 
+ThanThoai       bùi thoại 
+anhduc2203      Vũ đức 
+VP1927          Phạm Việt Cường
+dunghustk60     Trần Minh Dũng 
+
+
+
