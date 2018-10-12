@@ -1,6 +1,7 @@
 import numpy as np 
 from copy import deepcopy
 from operator import itemgetter
+from sklearn.metrics import mean_absolute_error, mean_squared_error
 import time
 def CFLNN(x,degree):
     if degree == 0 :
@@ -24,10 +25,10 @@ class DifferentialEvolution(object):
         
         Z = np.matmul(self.X_train_new,vector)
        # print("calculating")
-        mse = np.mean(np.square(Z-self.Y_train))
+        #mse = np.mean(np.square(Z-self.Y_train))
         print("cal mse ",time.clock()-t1)
-        print("mse",mse)
-        return mse
+        return mean_squared_error(self.Y_train, Z)
+
     def expand(self, train_point):
         p1 = [CFLNN(train_point[0],i) for i in range(5)]
         p2 = [CFLNN(train_point[1],i) for i in range(5)]
