@@ -64,17 +64,18 @@ def selectParent(pop, score):
 # MPC method with k cross point
 def createChild(parent1, parent2, k=3):
     r = random.sample(range(1, len(parent1)), k)
+    r.append(0)
+    r.append(size_var)
     r.sort()
     # print('r = ', r)
     child = np.array([])
     # making child in this loop
-    for i in range(len(r)):
-        if(i == len(r)-1):
-            child = np.concatenate((child, parent1[r[i]:]))
-        elif(i < len(r)-2):
+    for i in range(len(r)-1):
+        if i % 2 == 0:
             child = np.concatenate((child, parent1[r[i]:r[i+1]]))
-            child = np.concatenate((child, parent2[r[i+1]:r[i+2]]))
-            i += 1
+        if i % 2 == 1:
+            child = np.concatenate((child, parent2[r[i]:r[i+1]]))
+        # print('child: ', child)
     return child
 
 
@@ -87,7 +88,10 @@ def crossOver(pop, parents_index):
     # mate everyone with each other
     for i in range(len(parents_index)-1):
         for j in range(i+1, len(parents_index)):
-            new_pop.append(createChild(pop[i], pop[j]))
+            x = createChild(pop[i], pop[j])
+            if (x.shape != (50,)):
+                print('par: ', pop[i].shape, ',', pop[j].shape, '==>', x.shape)
+            new_pop.append(x)
     return new_pop
 
 
