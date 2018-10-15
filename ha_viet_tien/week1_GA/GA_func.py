@@ -119,6 +119,14 @@ def inverseMutation(solution):
     return solution
 
 
+def randomResetting(solution, k=3):
+    var = random.sample(range(-10, 10), k)
+    index = random.sample(range(0, len(solution)), k)
+    for i in range(k):
+        solution[index[i]] = var[i]
+    return solution
+
+
 # mutate population randomly
 def mutation(pop, mutate, mutation_rate=0.3):
     r = 0
