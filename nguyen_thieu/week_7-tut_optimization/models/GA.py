@@ -2,7 +2,6 @@ import numpy as np
 from random import random
 from copy import deepcopy
 from operator import itemgetter
-from sklearn.metrics import mean_absolute_error
 import time
 
 class BaseClass(object):
@@ -85,8 +84,11 @@ class BaseClass(object):
                     time2 = True
         return selected
 
-
     ### Crossover
+    def crossover_one_point_one_child(self, dad=None, mom=None):
+        point = np.random.randint(0, len(dad))
+        return dad[:point] + mom[point:]
+
     def crossover_one_point(self, dad=None, mom=None):
         point = np.random.randint(0, len(dad))
         w1 = dad[:point] + mom[point:]
@@ -205,7 +207,65 @@ class BaseClass(object):
 
         if self.print_loss:
             print("done! Solution: f = {}, score = {}".format(best_chromosome_train[0], best_chromosome_train[1]))
-        return best_chromosome_train[0], self.train_loss
+        return best_chromosome_train, self.train_loss
+
+class Wheels(BaseClass):
+    """
+    A variant of selection wheels
+    """
+    def __init__(self, ga_para=None):
+        super().__init__(ga_para)
+
+    ### Selection
+    def get_index_roulette_wheel_selection_variant(self, list_fitness, sum_fitness, fitness_min):
+        r = np.random.uniform(low=fitness_min, high=sum_fitness)
+        for idx, f in enumerate(list_fitness):
+            r += f
+            if r < fitness_min:
+                return idx
+
+    def create_next_generation(self, pop):
+        next_population = []
+        new_population = []
+
+        ### Tournament Selection
+        for i in range(0, self.pop_size):
+            id, im = np.random.choice(range(0, self.pop_size), 2, replace=False)
+            new_population.append(pop[id] if pop[id][BaseClass.INDEX_FITNESS_IN_ENCODED]
+                                             < pop[im][BaseClass.INDEX_FITNESS_IN_ENCODED] else pop[im])
+        pop = new_population
+        ### Selection wheels
+        list_fitness = [pop[i][1] for i in range(self.pop_size)]
+        fitness_sum = sum(list_fitness)
+        fitness_min = min(list_fitness)
+        while (len(new_population) < self.pop_size):
+            new_population.append(pop[self.get_index_roulette_wheel_selection_variant(list_fitness, fitness_sum, fitness_min)])
+
+
+        for i in range(0, int(self.pop_size / 2)):
+            ### Crossover
+            child1 = new_population[i][BaseClass.INDEX_CHROMOSOME_IN_ENCODED]
+            child2 = new_population[i + 1][BaseClass.INDEX_CHROMOSOME_IN_ENCODED]
+            if np.random.uniform() < self.pc:
+                child1 = self.crossover_one_point_one_child(new_population[i][BaseClass.INDEX_CHROMOSOME_IN_ENCODED],
+                                                            new_population[i + 1][
+                                                                BaseClass.INDEX_CHROMOSOME_IN_ENCODED])
+            if np.random.uniform() < self.pc:
+                child2 = self.crossover_one_point_one_child(
+                    new_population[i + 1][BaseClass.INDEX_CHROMOSOME_IN_ENCODED],
+                    new_population[i][BaseClass.INDEX_CHROMOSOME_IN_ENCODED])
+            ### Mutation
+            for id in range(0, self.problem_size):
+                if np.random.uniform() < self.pm:
+                    child1 = self.mutation_flip_point(child1, id)
+                if np.random.uniform() < self.pm:
+                    child2 = self.mutation_flip_point(child2, id)
+            c1_new = [child1, self.fitness_chromosome(child1)]
+            c2_new = [child2, self.fitness_chromosome(child2)]
+            next_population.append(c1_new)
+            next_population.append(c2_new)
+
+        return next_population
 
 
 
@@ -251,4 +311,45 @@ class Ver1(BaseClass):
         next_population = super().survivor_gready(pop, next_population)
         return next_population
 
+
+class Tournament(BaseClass):
+    """
+    Selection: Tournament
+    """
+
+    def __init__(self, ga_para=None):
+        super().__init__(ga_para)
+
+    def create_next_generation(self, pop):
+        next_population = []
+        new_population = []
+
+        ### Selection
+        for i in range(0, self.pop_size):
+            id, im = np.random.choice(range(0, self.pop_size), 2, replace=False)
+            new_population.append(pop[id] if pop[id][BaseClass.INDEX_FITNESS_IN_ENCODED]
+                                              < pop[im][BaseClass.INDEX_FITNESS_IN_ENCODED] else pop[im])
+
+        for i in range(0, int(self.pop_size/2)):
+            ### Crossover
+            child1 = new_population[i][BaseClass.INDEX_CHROMOSOME_IN_ENCODED]
+            child2 = new_population[i+1][BaseClass.INDEX_CHROMOSOME_IN_ENCODED]
+            if np.random.uniform() < self.pc:
+                child1 = self.crossover_one_point_one_child(new_population[i][BaseClass.INDEX_CHROMOSOME_IN_ENCODED],
+                                                            new_population[i+1][BaseClass.INDEX_CHROMOSOME_IN_ENCODED])
+            if np.random.uniform() < self.pc:
+                child2 = self.crossover_one_point_one_child(new_population[i+1][BaseClass.INDEX_CHROMOSOME_IN_ENCODED],
+                                                            new_population[i][BaseClass.INDEX_CHROMOSOME_IN_ENCODED])
+            ### Mutation
+            for id in range(0, self.problem_size):
+                if np.random.uniform() < self.pm:
+                    child1 = self.mutation_flip_point(child1, id)
+                if np.random.uniform() < self.pm:
+                    child2 = self.mutation_flip_point(child2, id)
+            c1_new = [child1, self.fitness_chromosome(child1)]
+            c2_new = [child2, self.fitness_chromosome(child2)]
+            next_population.append(c1_new)
+            next_population.append(c2_new)
+
+        return next_population
 
