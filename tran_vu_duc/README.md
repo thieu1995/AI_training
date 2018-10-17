@@ -29,3 +29,5 @@ however, with the usage of MPC method, the results are by far better. every mode
 in conclusion, among all the acceptable models, i find that EBS-MPC-ScM/SM/IM usually return pretty similar outcomes, both in the convergence time (the number of generations before reaching a solution), and in the optimal points found. meanwhile, an EBS-MPC-RR model does not seem to be able to reach any solution that has fitness point lower than -20000, provided that all models use the same setup (e.g population size, mutation rate, termination condition)
 
 also, if we reduce the initial population size, then the diversity of the population will decrease consequently, resulting in earlier convergence at worse solutions.
+
+TODO: visual comparison between models
