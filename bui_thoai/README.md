@@ -1,3 +1,3 @@
 ## Tutorials
 - Mở teminal
-- G
+- Gõ lệnh python + đường dẫn tới file Ga.py
