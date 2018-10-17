@@ -183,13 +183,13 @@ class BaseClass(object):
 
 
     def train(self):
-        best_chromosome_train = None
-        best_fitness_train = 0
+        best_train = [0, 0]
         self.search_space = self.create_search_space()
         t2 = time.clock()
         pop = [ self.create_chromosome(self.search_space) for _ in range(self.pop_size) ]
         print("Time init pop: ", time.clock() - t2)
 
+        time_list = []
         for j in range(0, self.epoch):
             t3 = time.clock()
             # Next generations
@@ -198,16 +198,18 @@ class BaseClass(object):
             # Find best chromosome
             pop_sorted = sorted(pop, key=itemgetter(BaseClass.FITNESS_INDEX_SORTED))
             best_chromosome_train = deepcopy(pop_sorted[BaseClass.FITNESS_INDEX_AFTER_SORTED])
-            if best_chromosome_train[1] < best_fitness_train:
-                best_fitness_train = best_chromosome_train[1]
+            if best_chromosome_train[1] < best_train[1]:
+                best_train = best_chromosome_train
             self.train_loss.append(best_chromosome_train[1])
 
+            t4 = time.clock() - t3
+            time_list.append(t4)
             if self.print_loss:
-                print("> Epoch {}: Best fitness = {}, Time = {}".format(j + 1, round(best_fitness_train, 4), round(time.clock()-t3, 4)))
+                print("> Epoch {}: Best fitness = {}, Time = {}".format(j + 1, round(best_train[1], 4), round(t4, 4)))
 
         if self.print_loss:
-            print("done! Solution: f = {}, score = {}".format(best_chromosome_train[0], best_chromosome_train[1]))
-        return best_chromosome_train, self.train_loss
+            print("done! Solution: f = {}, score = {}".format(best_train[0], best_train[1]))
+        return best_train, self.train_loss, round( sum(time_list) / self.epoch, 4 )
 
 class Wheels(BaseClass):
     """
