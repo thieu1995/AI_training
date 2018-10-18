@@ -53,15 +53,24 @@ def tournamentSelection(Chromosomes , fit):
     else :
         return y
 
-def rankingSelection(Chromosomes, fit , ex = 0.5): 
+def checkFit(x , fit) : 
+    for i in range(len(fit)) :
+        if x == fit[i] :
+            return i
+    return -1
+
+
+def rankingSelection(Chromosomes , fit , ex = 0.5)  :
     temp = []
     temp.extend(fit)
+    temp.sort()
+    rankSize = int(len(Chromosomes) * ex )
+    temp = temp[ : rankSize]
     parent_selection = []
-    rankSize = int(len(Chromosomes) * ex)
-    temp = temp[0 : rankSize]
-    for i in range(len(Chromosomes)) :
-        if fit[i] in temp is True :
-            parent_selection.append(Chromosomes[i])
+    for i in range(rankSize) :
+        x = checkFit(temp[i] , fit)
+        if x > -1 :
+            parent_selection.append(Chromosomes[x])
     return parent_selection
 
 def multiPointCrossover(parent1 , parent2) :
