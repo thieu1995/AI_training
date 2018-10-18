@@ -2,10 +2,11 @@ import numpy as np
 import random
 # np.random.seed(2)
 size_var = 50
-size_pool = 20
+size_pool = 200
+parent_num = 21
 
 
-# generate 10 array randomly
+# generate first gen randomly
 def generateFirstGen():
     pop = []
     for i in range(size_pool):
@@ -13,38 +14,38 @@ def generateFirstGen():
     return pop
 
 
-# caculate fitness
+# caculate the sum of function
 def fitness_score(pop):
     score = []
     for i in range(len(pop)):
         sum = 0
-        for j in range(50):
+        for j in range(size_var):
             # divided by 1000 to make it smaller
-            if j % 2 == 1:
+            if j % 2 == 0:
                 sum += (pop[i][j]**2)/1000
-            elif j % 2 == 0:
+            elif j % 2 == 1:
                 sum += (pop[i][j]**3)/1000
         score.append(sum)
     return score
 
 
-def tournamentSelection(pop, score, parents_index, tour_size=5):
+def tournamentSelection(pop, score, parents_index, tour_size=10):
     """
     pop: sample pool
     score: fitness score corresponding to pop
     """
+    # to make sure it won't be selected again
     index = [x for x in range(0, len(pop))\
                                 if ((x in parents_index) is False)]
     random.shuffle(index)
     index = index[:tour_size]
-    winner_score = 10000
-    winner_id = -1
+    winner_score = score[index[0]]
+    winner_id = 0
     # print('index: ', index)
     for i in index:
         if score[i] < winner_score:
             winner_score = score[i]
             winner_id = i
-    # to make sure it won't be selected again
     return winner_id
 
 
@@ -56,7 +57,7 @@ def selectParent(pop, score):
     """
     parents_index = []
     # chon ra bo me
-    for i in range(int(size_pool/2)):
+    for i in range(parent_num):
         parents_index.append(tournamentSelection(pop, score, parents_index))
     return parents_index
 
@@ -89,16 +90,21 @@ def crossOver(pop, parents_index):
     for i in range(len(parents_index)-1):
         for j in range(i+1, len(parents_index)):
             x = createChild(pop[i], pop[j])
+            # for error checking
             if (x.shape != (50,)):
                 print('par: ', pop[i].shape, ',', pop[j].shape, '==>', x.shape)
             new_pop.append(x)
     return new_pop
 
 
-def swapMutation(solution):
-    index = random.sample(range(1, len(solution)), 2)
-    # print(index)
-    solution[index[0]], solution[index[1]] = solution[index[1]], solution[index[0]]
+# thay doi vi tri k cap voi nhau
+def swapMutation(solution, k=20):
+    tmp = solution
+    index1 = random.sample(range(1, len(solution)), k)
+    index2 = index1
+    np.random.shuffle(index1)
+    for i in range(k):
+        solution[index1[i]] = tmp[index2[i]]
     return solution
 
 
@@ -119,7 +125,7 @@ def inverseMutation(solution):
     return solution
 
 
-def randomResetting(solution, k=3):
+def randomResetting(solution, k=10):
     var = random.sample(range(-10, 10), k)
     index = random.sample(range(0, len(solution)), k)
     for i in range(k):
