@@ -1,0 +1,7 @@
++ Every configuration with the same energy level E(x) (fitness point) has equal probability of being chosen.
++ Fitter individuals are more likely to be maintained throughout the selection process.
++ Maintain the balance between "exploration" and "exploitation".
+
+M parents -> M children
+M children become the new population (replace their parents)
+
