@@ -11,7 +11,7 @@ class GA:
 	Find the minium of the func: x1^2 + x2^3 +... + x50^2
 	where xi in range(-10, 10)
 	"""
-	def __init__(self, num_of_var, pop_size, constraints, mutated_chance, selection_percent,  alpha, beta):
+	def __init__(self, num_of_var, pop_size, constraints, mutated_chance, selection_percent,  alpha, beta, numbers_of_energy_level):
 		self.num_of_var = num_of_var
 		self.pop_size = pop_size
 		self.constraints = constraints
@@ -20,8 +20,10 @@ class GA:
 		self.pop = self.generateFirstPop(constraints)
 		self.beta = beta
 		self.alpha = alpha
-		self.Energy_levels = []
-		self.Entropy_levels = []
+		self.numbers_of_energy_level = numbers_of_energy_level
+		self.Energy_levels =  self.initEnergyLevel()
+		self.Entropy_levels = self.initEntropyLevel()
+
 
 
 	def generateFirstPop(self, constraints):
@@ -31,16 +33,16 @@ class GA:
 		return pop.tolist()
 
 	def initEntropyLevel(self):
-		S = np.zeros(len(self.energy_levels))
-		self.Entropy_levels = S.tolist()
+		S = np.zeros(self.numbers_of_energy_level)
+		return S.tolist()
 
 	def initEnergyLevel(self):
-		fit_range= np.linspace(0, 1, 20)
+		fit_range= np.linspace(0, 1, self.numbers_of_energy_level + 1)
 		fit_lvs = []
-		for i in range(fit_lvs):
-			fit_level.append([fit_lvs[i], fit_lvs[i+1]])
+		for i in range(len(fit_range) - 1):
+			fit_lvs.append([fit_range[i], fit_range[i+1]])
 
-		self.energy_levels = fit_lvs
+		return fit_lvs
 
 
 	def fitness(self, solution):
@@ -51,39 +53,48 @@ class GA:
 			else:
 				res += solution[i]**3
 		# return res
-		return 1/(10*abs((res - TARGET)/TARGET) + 1)
+		return 1/(self.numbers_of_energy_level*abs((res - TARGET)/TARGET) + 1)
 
 
 	def E_BoltzmannSel(self):
 		r = 0
 		while r < 1:
+			# Select parents
 			p1, p2 = random.sample(range(self.pop_size), 2)
+			# Produce Child
 			test_child = self.multiCrossOver(self.pop[p1], self.pop[p2])
-			test_child = self.SwM(test_child)
+			# Apply mutation for child
+			test_child = self.SwM(test_child) #Using SwapMutation
 
 			child_fitness = self.fitness(test_child)
 
-			parent1_fitness = self.fitness(parent1_fitness)
+			parent1_fitness = self.fitness(self.pop[p1])
 
-			for p1_EL in range(self.energy_levels):
-				fit_level = self.energy_levels[p1_EL]
-				if child_fitness in range(fit_level[0], fit_level[1]):
+
+			child_EL = 0      #Child energy level
+			parent1_EL = 0    #Parent Energy level
+
+			# Specify parent's Energy level
+			for p1_EL in range(len(self.Energy_levels)):
+				fit_level = self.Energy_levels[p1_EL]
+				if parent1_fitness >= fit_level[0] and parent1_fitness < fit_level[1]:
 					break
 
-			for child_EL in range(self.energy_levels):
-				fit_level = self.energy_levels[child_EL]
-				if child_fitness in range(fit_level[0], fit_level[1]):
+			# Specify child's Energy level
+			for child_EL in range(len(self.Energy_levels)):
+				fit_level = self.Energy_levels[child_EL]
+				if child_fitness >= fit_level[0] and child_fitness < fit_level[1]:
 					break
 
-			SE_predict = self.Entropy_levels[child_EL] + alpha
-			P1_pow = self.Entropy_levels[p1_EL] + self.beta*parent1_fitness
-			child_pow = self.Entropy_levels[child_EL] + self.beta*child_fitness
-			r = exp(P1_pow - child_pow)
+			SE_predict = self.Entropy_levels[child_EL] + self.alpha
+			P1_pow = -self.Entropy_levels[p1_EL] + self.beta*parent1_fitness      # B.E(x) - S(E(x)) 
+			child_pow = -self.Entropy_levels[child_EL] + self.beta*child_fitness
+			r = np.exp(-P1_pow + child_pow)
 
 		self.Entropy_levels[child_EL] += self.alpha
 		return test_child
 
-	def SwM(childx):
+	def SwM(self, childx):  #Swap mutation
 		child = childx
 		r = random.random()
 		if r < self.mutated_chance:
@@ -98,8 +109,8 @@ class GA:
 		start = min(p1, p2)
 		end = max(p1, p2)
 		child = []
-		child = parent1[:start] + p2[start:end] + p1[end:]
-		return child.tolist()
+		child = parent1[:start] + parent2[start:end] + parent1[end:]
+		return child
 
 
 	def crossOver(self):
@@ -156,31 +167,42 @@ class GA:
 		min_res = min(res)
 		min_index = res.index(min(res))
 
-		# print("solution has min: ", self.pop[min_index])
-		# print("Min of res: ", min_res)
 		return min_res
 
 	def run(self):
 		gen = 0
 		all_res = []
-		while (gen < 20):
-			all_res.append(self.objectFunc())
+		while (gen < 500):
+			res = self.objectFunc()
+			all_res.append(res)
 			self.crossOver()
 			# print("randomResetting:", time.clock() - start)
-			print("gen = ", gen, "T = ", self.T, "pop_size", len(self.pop))
+			print("gen = ", gen, "Value: ", res,  "pop_size", len(self.pop))
 			gen += 1
 			# print("Time per iteration: ", time.clock() - start)
 		return all_res, gen, 
 
-test = GA(num_of_var = 20, pop_size = 200, constraints = [-10, 10], mutated_chance = 0.2, selection_percent = 0.5, beta = 0.7,  alpha = 0.01)
+test = GA(num_of_var = 50, pop_size = 200, constraints = [-10, 10], mutated_chance = 0.2, selection_percent = 0.5, beta = 100,  alpha = 0.01, numbers_of_energy_level = 50)
 
-
+start = time.clock()
 res, gen = test.run()
+time = time.clock() - start
+
+print("Entropy_levels: ", test.Entropy_levels)
 
 X = list(range(0, gen))
 
-plt.plot(X, res)
-X.show()
+ax = plt.subplot(111)
+plt.title("Genetic Algorithms Testing Entropy Boltzmann" )
+plt.plot(X, res, label = "best_fit: %d (%.4lf s/epoch)" %(min(res), time/gen))
+plt.grid(True)
+
+leg = plt.legend(loc = 'upper right', ncol = 1,  shadow = True, fancybox = True)
+leg.get_frame().set_alpha(0.5)
+
+plt.xlabel("Generation")
+plt.ylabel("Value")
+plt.show()
 
 
 
