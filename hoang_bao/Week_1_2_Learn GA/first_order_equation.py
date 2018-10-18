@@ -18,7 +18,7 @@ def generateFirstPop():
     return pop
 def evaluation(pop):
     len_pop = len(pop)
-    pop_perf = {}
+    pop_perf = {} # define a dictionary
     fit = [ fitness(pop[x]) for x in range(len_pop) ]
     prob = [ round(fit[i]/sum(fit),10) for i in range(len_pop)]
     for i in range(len_pop):
@@ -97,7 +97,7 @@ pop = generateFirstPop()
 gen = 1
 
 while(objectiveFun(pop)!=0):
-    print("gen :",gen)
+    print("gen :",gen, "pop size:", len(pop))
     gen += 1
     prob = evaluation(pop)
     parents_index = selectParent(pop,prob)

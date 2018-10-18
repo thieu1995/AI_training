@@ -9,7 +9,7 @@ def CFLNN(x,degree):
     else:
         return 2*x*CFLNN(x,degree-1) - CFLNN(x,degree-2)
 class GeneticAlgorithm(object):
-    def __init__(self,problem_size,pop_size,max_gens,search_space,mutationf,crossf,X_train=None,Y_train=None):
+    def __init__(self,problem_size,pop_size,max_gens,search_space,mutationf,crossf,X_train = None,Y_train=None):
         self.problem_size = problem_size
         self.pop_size = pop_size
         self.max_gens = max_gens
