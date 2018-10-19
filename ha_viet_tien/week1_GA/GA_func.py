@@ -22,10 +22,10 @@ def fitness_score(pop):
         for j in range(size_var):
             # divided by 1000 to make it smaller
             if j % 2 == 0:
-                sum += (pop[i][j]**2)/1000
+                sum += (pop[i][j]**2)
             elif j % 2 == 1:
-                sum += (pop[i][j]**3)/1000
-        score.append(sum)
+                sum += (pop[i][j]**3)
+        score.append(sum/1000)
     return score
 
 
@@ -134,10 +134,11 @@ def randomResetting(solution, k=10):
 
 
 # mutate population randomly
-def mutation(pop, mutate, mutation_rate=0.3):
+def mutation(pop, mutate, mutation_rate=0.3, gen_mutate=5):
     r = 0
-    for solution in pop:
+    index = random.sample(range(0, size_var), gen_mutate)
+    for i in index:
         r = random.random()
         if r < mutation_rate:
-            solution = mutate(solution)
+            pop[i] = mutate(pop[i])
     return pop
