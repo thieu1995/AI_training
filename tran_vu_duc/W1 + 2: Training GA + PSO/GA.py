@@ -170,7 +170,7 @@ class GA:
 
 pop_size = 300
 number_of_loops = 3000
-mutation_rate = 0.2
+mutation_rate = 0.02
 termination = 100
 
 mutation_method = sys.argv[1]
