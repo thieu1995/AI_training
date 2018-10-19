@@ -9,7 +9,7 @@
 Nếu không pull về sẽ không thể đẩy lên được.
 
 #### Members 
-- nguyen_thieu        nguyenthieu95   nguyễn văn thiệu (KSTN-K59)
+- nguyen_thieu        nguyenthieu95   nguyễn văn thiệu (KSTN-K58)
 - hoang_bao           hoangbao123     hoàng nghĩa bảo (KSTN-K59)
 - tran_huy            huytr225        trần huy (HTTT-K59)
 - dinh_phien          dinhphien       Đinh Phiên (HTTT-K60)
