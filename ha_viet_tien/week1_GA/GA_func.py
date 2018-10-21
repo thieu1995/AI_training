@@ -29,6 +29,7 @@ class GA:
     # caculate the sum of function
     def fitness_score(self):
         self.score = []
+        self.score[:] = []
         for i in range(len(self.pop)):
             sum = 0
             for j in range(self.size_var):
@@ -64,6 +65,7 @@ class GA:
         index: id of champions
         """
         self.parents_index = []
+        self.parents_index[:] = []
         # chon ra bo me
         for i in range(self.parent_num):
             self.parents_index.append(self.tournamentSelection())
@@ -78,22 +80,23 @@ class GA:
         # mate everyone with each other
         for i in range(len(self.parents_index)-1):
             for j in range(i+1, len(self.parents_index)):
-                x = createChild(self.pop[i], self.pop[j])
-                # for error checking
-                if (x.shape != (50,)):
-                    print('par: ', pop[i].shape, ',', pop[j].shape, '==>', x.shape)
+                x = createChild(self.pop[self.parents_index[i]], self.pop[self.parents_index[j]])
                 new_pop.append(x)
+            new_pop.append(self.pop[self.parents_index[i]])
+
         self.pop = new_pop
 
 
     # mutate randomly
     def mutation(self, mutate):
         r = 0
+        count = 0
         for i in range(len(self.pop)):
             r = random.random()
             if r < self.mutation_rate:
+                count += 1
                 self.pop[i] = mutate(self.pop[i])
-
+        print('Number of mutation: ', count)
 
     # run in a loop
     def run(self, mutate):
