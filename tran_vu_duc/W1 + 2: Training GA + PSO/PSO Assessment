@@ -1,0 +1,11 @@
+All PSO models have swarm size of 200, maximum number of loops of 1000 and terminate after 100 iterations with no improvement 
+
+ASSESSMENT
+
+For PSO algorithm using star model, positions of all birds in the swarm improve greatly just after a few iterations. However, this model fails to find the global optimum, and prematurely converge at around -22000 instead. Increasing the two constants c1 and c2 can make the model converge faster, but more likely to yield a worse result. 
+
+Compared to the EBS-MPC-RR model last week, PSO-Star network model seems to be slightly better in both convergence time and final outcome.
+However, it is inferior to the EBS-MPC-ScM/SM/IM in terms of finding the best solution.
+
+TODO: Von Neumann network
+visual comparison between models
