@@ -81,7 +81,8 @@ def printSolution(step , gbest) :
 if __name__ == '__main__' :
     warms = initWarms()
     velocities = initVelocities()
-    pbest = warms
+    pbest = []
+    pb
     gbest = warms[0]
     for i in range(1,AMOUNT_WARM) :
         gbest = updateGbest(warms[i] , gbest)
