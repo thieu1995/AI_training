@@ -1,2 +1,5 @@
 ## Tutorials
-Mở source code trên IDE để chạy
+
+- Mở Terminal
+- Gõ đường dẫn đến file
+- Gõ lệnh python filename.py

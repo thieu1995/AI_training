@@ -1,0 +1,7 @@
+PSO USING STAR, PYRAMID
+----------------------------
+PSO_gbest.py : PSO using star-network
+PSO_pyramid_lbest.py : PSO using paramid-network (casual code-type, Cuong is converting to OOP-form) 
+PSO_ring_lbest : PSO using ring-network
+Graph.py : Excute GA, pyramid and star, result's stored in result
+GA.py : GA using Boltzman + Davis Order + SM/BFM/ScM/IM (Davis Order is considered quite bad in this problem)
