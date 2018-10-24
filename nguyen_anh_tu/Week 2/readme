@@ -1,0 +1,6 @@
+PSO USING STAR, PYRAMID
+----------------------------
+PSO_gbest.py : PSO using star-network
+PSO_pyramid_lbest.py : PSO using paramid-network
+PSO_ring_lbest : PSO using ring-network
+Graph.py : Excute GA, pyramid and star, result's stored in result
