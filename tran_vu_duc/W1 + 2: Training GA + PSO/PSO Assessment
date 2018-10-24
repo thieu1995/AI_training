@@ -7,5 +7,7 @@ For PSO algorithm using star model, positions of all birds in the swarm improve 
 Compared to the EBS-MPC-RR model last week, PSO-Star network model seems to be slightly better in both convergence time and final outcome.
 However, it is inferior to the EBS-MPC-ScM/SM/IM in terms of finding the best solution.
 
-TODO: Von Neumann network
-visual comparison between models
+For PSO algorithm using Von Neumann model, it proves to be the most superior so far. The algorithm converges after only 200 iterations, and always returns a result better than -24500, outperforming all of the others in both runtime taken and best solution found.
+Takes quite a long time for each loop however.
+
+TODO: visual comparison between models
