@@ -24,5 +24,6 @@ Particle Swarm Optimization
 
 Star social network model
 'python3 PSO.py' 
+
 Von Neumann social network model
 'python3 PSO-VonNeumann.py'
