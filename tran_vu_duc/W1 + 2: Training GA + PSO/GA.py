@@ -1,10 +1,19 @@
 import numpy as np
 import random
 import sys
+import matplotlib.pyplot as plt
 
 alpha = 0.8
 beta = 50 #so that beta.E and S are approximately of the same order
-epsilon = 0.001 #proper values of epsilon should be chosen between 10^-3 to 10^-2
+epsilon = 0.0001
+'''
+epsilon has to be this low and beta has to be this high because we're dealing with a large population size and a huge number of generations, compared to the test model in the paper.
+the beta x energy factor remains in a specific range throughout the whole process, while the entropy factor rise significantly after a few loops.
+for example, after 100 loops at a local optimum, the entropy of that energy level will become so high (number of loops x population size x epsilon) 
+that the energy factor (which represents the overall fitness of that generation) becomes minimal in comparison, and can be disregarded.
+the model then will only care about candidates that have low entropy, without giving a thought to their fitness points.
+that will consequently raise their entropy, and eventually the result will go back down again, however, how long it takes and how wildly it fluctuates depends on these parameters.
+'''
 N = 1000 #number of segments in energy value range
 minimum = -10
 maximum = 10
@@ -57,9 +66,8 @@ class GA:
 	def acceptanceRate(self, trial_config):
 		test_energy = self.energy(self.test_config)
 		trial_energy = self.energy(trial_config)
-		deltaF = (self.S(test_energy) + beta * test_energy) - (self.S(trial_energy) + beta * trial_energy) - 0.1
-		#r = np.exp(deltaF)
-		r = 20**deltaF
+		deltaF = (self.S(test_energy) + beta * test_energy) - (self.S(trial_energy) + beta * trial_energy)
+		r = np.exp(deltaF)
 		return r
 
 	def WAR(self, parent_1, parent_2): #return a random child out of the two
@@ -160,9 +168,9 @@ class GA:
 			#else: print("decline")
 		return child
 
-pop_size = 50
-number_of_loops = 10000
-mutation_rate = 0.03
+pop_size = 300
+number_of_loops = 3000
+mutation_rate = 0.02
 termination = 100
 
 mutation_method = sys.argv[1]
@@ -173,6 +181,8 @@ k = GA(pop_size, mutation_rate, mutation_method, crossover_method)
 lfit = hypo_max #last generation best individual's fitness
 counter = 0
 
+gen_fitness = []
+
 for i in range(number_of_loops):
 	children = []
 	fitness = []
@@ -180,6 +190,14 @@ for i in range(number_of_loops):
 		children.append(k.EBS())
 		fitness.append(k.fitness(children[j]))
 	k.pop = children
+	gen_fitness.append(min(fitness))
+
+	print("Generation", i + 1)
+	print(min(fitness))
+	print("\n----\n")
+
+	'''
+
 	if abs(min(fitness) - lfit) <= termination:
 		counter = counter + 1
 	else: 
@@ -191,9 +209,11 @@ for i in range(number_of_loops):
 	
 	if(counter == 100): #100 generations with no improvement
 		break
+	'''
 
-	print("Generation", i + 1)
-	for j in range(pop_size):
-		print(k.fitness(k.pop[j]))
-	print("\n----\n")
+X = list(range(0, number_of_loops))
+plt.plot(X, gen_fitness)
+plt.xlabel("Generation")
+plt.ylabel("Value")
+plt.show()	
 

@@ -1,72 +1,128 @@
 import numpy as np
 import random
-# np.random.seed(2)
-size_var = 50
-size_pool = 200
-parent_num = 21
 
-
-# generate first gen randomly
-def generateFirstGen():
-    pop = []
-    for i in range(size_pool):
-        pop.append(np.random.uniform(-10, 10, size=size_var))
-    return pop
-
-
-# caculate the sum of function
-def fitness_score(pop):
-    score = []
-    for i in range(len(pop)):
-        sum = 0
-        for j in range(size_var):
-            # divided by 1000 to make it smaller
-            if j % 2 == 0:
-                sum += (pop[i][j]**2)/1000
-            elif j % 2 == 1:
-                sum += (pop[i][j]**3)/1000
-        score.append(sum)
-    return score
-
-
-def tournamentSelection(pop, score, parents_index, tour_size=10):
+# start of class
+class GA:
     """
-    pop: sample pool
-    score: fitness score corresponding to pop
+    Find solution for the function x1^2 + x2^3 + x3^3 + ... + x49^2 + x50^2
+    reach the min value using GA technique
     """
-    # to make sure it won't be selected again
-    index = [x for x in range(0, len(pop))\
-                                if ((x in parents_index) is False)]
-    random.shuffle(index)
-    index = index[:tour_size]
-    winner_score = score[index[0]]
-    winner_id = 0
-    # print('index: ', index)
-    for i in index:
-        if score[i] < winner_score:
-            winner_score = score[i]
-            winner_id = i
-    return winner_id
+    def __init__(self, size_var, size_pop, parent_num, tour_size, constraints,\
+    mutation_rate):
+        self.size_var = size_var
+        self.size_pop = size_pop
+        self.parent_num = parent_num
+        self.tour_size = tour_size
+        self.mutation_rate = mutation_rate
+        self.constraints = constraints
+        self.pop = self.generateFirstGen()
+        # self.score = self.fitness_score()
+
+    # generate first gen randomly
+    def generateFirstGen(self):
+        pop = []
+        for i in range(self.size_pop):
+            pop.append(np.random.uniform(self.constraints[0], self.constraints[1], size=self.size_var))
+        return pop
 
 
-def selectParent(pop, score):
-    """
-    pop: sample pool
-    score: fitness score corresponding to pop
-    index: id of champions
-    """
-    parents_index = []
-    # chon ra bo me
-    for i in range(parent_num):
-        parents_index.append(tournamentSelection(pop, score, parents_index))
-    return parents_index
+    # caculate the sum of function
+    def fitness_score(self):
+        self.score = []
+        self.score[:] = []
+        for i in range(len(self.pop)):
+            sum = 0
+            for j in range(self.size_var):
+                # divided by 1000 to make it smaller
+                if j % 2 == 0:
+                    sum += (self.pop[i][j]**2)
+                elif j % 2 == 1:
+                    sum += (self.pop[i][j]**3)
+            self.score.append(sum/1000)
 
 
+    def tournamentSelection(self):
+        # to make sure it won't be selected again
+        index = [x for x in range(0, len(self.pop))\
+                                    if ((x in self.parents_index) is False)]
+        random.shuffle(index)
+        index = index[:self.tour_size]
+        winner_score = self.score[index[0]]
+        winner_id = index[0]
+        # battle
+        for i in index:
+            if self.score[i] < winner_score:
+                winner_score = self.score[i]
+                winner_id = i
+                # print('winner ', i, ': ', winner_id)
+        return winner_id
+
+
+    def selectParent(self):
+        """
+        pop: sample pool
+        score: fitness score corresponding to pop
+        index: id of champions
+        """
+        self.parents_index = []
+        self.parents_index[:] = []
+        # chon ra bo me
+        for i in range(self.parent_num):
+            self.parents_index.append(self.tournamentSelection())
+
+
+    def crossOver(self):
+        """
+        pop: sample pool
+        parents_index:id of parent
+        """
+        new_pop = []
+        # mate everyone with each other
+        for i in range(len(self.parents_index)-1):
+            for j in range(i+1, len(self.parents_index)):
+                x = createChild(self.pop[self.parents_index[i]], self.pop[self.parents_index[j]])
+                new_pop.append(x)
+            new_pop.append(self.pop[self.parents_index[i]])
+
+        self.pop = new_pop
+
+
+    # mutate randomly
+    def mutation(self, mutate):
+        r = 0
+        count = 0
+        for i in range(len(self.pop)):
+            r = random.random()
+            if r < self.mutation_rate:
+                count += 1
+                self.pop[i] = mutate(self.pop[i])
+        print('Number of mutation: ', count)
+
+    # run in a loop
+    def run(self, mutate):
+        self.fitness_score()
+        min_value = []
+        min_value.append(min(self.score))
+        for i in range(3000):
+            self.selectParent()
+            self.crossOver()
+            self.mutation(mutate)
+            self.fitness_score()
+            min_value.append(min(self.score))
+
+        return min_value
+# end of class
+
+
+
+"""
+outside function
+"""
 # MPC method with k cross point
 def createChild(parent1, parent2, k=3):
     r = random.sample(range(1, len(parent1)), k)
     r.append(0)
-    r.append(size_var)
+    r.append(len(parent1))
     r.sort()
     # print('r = ', r)
     child = np.array([])
@@ -80,24 +136,7 @@ def createChild(parent1, parent2, k=3):
     return child
 
 
-def crossOver(pop, parents_index):
-    """
-    pop: sample pool
-    parents_index:id of parent
-    """
-    new_pop = []
-    # mate everyone with each other
-    for i in range(len(parents_index)-1):
-        for j in range(i+1, len(parents_index)):
-            x = createChild(pop[i], pop[j])
-            # for error checking
-            if (x.shape != (50,)):
-                print('par: ', pop[i].shape, ',', pop[j].shape, '==>', x.shape)
-            new_pop.append(x)
-    return new_pop
-
-
-# thay doi vi tri k cap voi nhau
+# swap vi tri k cap voi nhau
 def swapMutation(solution, k=20):
     tmp = solution
     index1 = random.sample(range(1, len(solution)), k)
@@ -108,6 +147,7 @@ def swapMutation(solution, k=20):
     return solution
 
 
+# dao vi tri mot chuoi gen
 def scrambleMutation(solution):
     index = random.sample(range(1, len(solution)), 2)
     index.sort()
@@ -116,6 +156,7 @@ def scrambleMutation(solution):
     return solution
 
 
+# dao nguoc mot chuoi gen
 def inverseMutation(solution):
     index = random.sample(range(1, len(solution)), 2)
     index.sort()
@@ -125,19 +166,10 @@ def inverseMutation(solution):
     return solution
 
 
+# bien doi ngau nhien cac phan tu o trong gen
 def randomResetting(solution, k=10):
     var = random.sample(range(-10, 10), k)
     index = random.sample(range(0, len(solution)), k)
     for i in range(k):
         solution[index[i]] = var[i]
     return solution
-
-
-# mutate population randomly
-def mutation(pop, mutate, mutation_rate=0.3):
-    r = 0
-    for solution in pop:
-        r = random.random()
-        if r < mutation_rate:
-            solution = mutate(solution)
-    return pop
