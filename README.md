@@ -12,7 +12,6 @@ Nếu không pull về sẽ không thể đẩy lên được.
 - nguyen_thieu        nguyenthieu95   nguyễn văn thiệu (KSTN-K58)
 - hoang_bao           hoangbao123     hoàng nghĩa bảo (KSTN-K59)
 - tran_huy            huytr225        trần huy (HTTT-K59)
-- dinh_phien          dinhphien       Đinh Phiên (HTTT-K60)
 
 - hoang_quoc_hao      haok61bkhn      hoàng quốc hảo (KHMT-K61)
 - tran_vu_duc         sad1503         trần vũ đức (VN-K61)
@@ -21,7 +20,12 @@ Nếu không pull về sẽ không thể đẩy lên được.
 - bui_thoai           ThanThoai       Bùi Xuân Thoại (CNTT2-K61)
 - anh_duc             anhduc2203      Vũ Anh Đức (CNTT2-K61) 
 - pham_viet_cuong     VP1927          Phạm Việt Cường (VN-K61)
+
+#### Out members
+- dinh_phien          dinhphien       Đinh Phiên (HTTT-K60)
 - tran_minh_dung      dunghustk60     Trần Minh Dũng (CLC-K60)
 - lanh_khanh          lanhkhanh118    Lành Khánh (KSCLC-HTTT-K60)
+
+
 
 
