@@ -53,7 +53,7 @@ class PSO:
     def generateVelocity(self):
         v = []
         for i in range(self.size_pop):
-            v.append(np.random.uniform(-1, 1, size=self.size_var))
+            v.append(np.random.uniform(-2.5, 2.5, size=self.size_var))
         return v
 
 
@@ -78,8 +78,8 @@ class PSO:
     def update_Pbest(self):
         for i in range(self.size_pop):
             if self.score[i] < self.Pbest[i]:
-                self.Pbest[i] = self.score[i]
-                self.Pposition[i] = self.pop[i]
+                self.Pbest[i] = np.copy(self.score[i])
+                self.Pposition[i] = np.copy(self.pop[i])
 
     def update_Gbest(self):
         self.Gbest[:] = []
@@ -92,12 +92,12 @@ class PSO:
         for i in range(0,4):
             for j in self.cluster[i]:
                 if self.score[j] < self.Gbest[i]:
-                    self.Gbest[i] = self.score[j]
-                    self.Gposition[i] = self.pop[j]
+                    self.Gbest[i] = np.copy(self.score[j])
+                    self.Gposition[i] = np.copy(self.pop[j])
             for j in self.neighbour[i]:
                 if self.score[j] < self.Gbest[i]:
-                    self.Gbest[i] = self.score[j]
-                    self.Gposition[i] = self.pop[j]
+                    self.Gbest[i] = np.copy(self.score[j])
+                    self.Gposition[i] = np.copy(self.pop[j])
 
 
     def update_velocity(self, time, iteration, pre_w):
@@ -123,15 +123,18 @@ class PSO:
             # to make sure it in the area of interest
             for j in range(self.size_var):
                 if self.pop[i][j] > 10 or self.pop[i][j] < -10:
-                    self.pop[i][j] = 10*(np.sign(self.pop[i][j]))
+                    """
+                    self.pop[i] = (10*(np.sign(self.pop[i][j]))/self.pop[i][j])*self.pop[i]
+                    """
+                    self.pop[i][j] = 10*np.sign(self.pop[i][j])
 
 
-    def run(self):
+    def run(self, iteration):
         min_value = []
-        for i in range(500):
+        for i in range(iteration):
             self.update_Pbest()
             self.update_Gbest()
-            self.update_velocity(i, 500, 0.9)
+            self.update_velocity(i, iteration, 0.9)
             self.update_position()
             self.fitness_score()
             min_value.append(min(self.Gbest))
