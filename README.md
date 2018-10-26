@@ -21,6 +21,8 @@ Nếu không pull về sẽ không thể đẩy lên được.
 - anh_duc             anhduc2203      Vũ Anh Đức (CNTT2-K61) 
 - pham_viet_cuong     VP1927          Phạm Việt Cường (VN-K61)
 
+- dao_minh_dung                       Đào Minh Dũng (KSTN-K63)
+
 #### Out members
 - dinh_phien          dinhphien       Đinh Phiên (HTTT-K60)
 - tran_minh_dung      dunghustk60     Trần Minh Dũng (CLC-K60)
