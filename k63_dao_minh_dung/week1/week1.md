@@ -28,6 +28,9 @@
     2. Các kiểu dữ liệu cơ bản: int, float, list, tuple, str, dict, set
     3. Function, Class, Kế thừa của class như nào?
     4. Các lệnh và từ khóa như: vòng lặp, câu điều kiện
+    5. Tìm hiểu về modules và packages
+    6. Tìm hiểu về input và output (đọc ghi file, search in folders...)
+     
     
 
 
