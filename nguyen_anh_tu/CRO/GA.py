@@ -29,32 +29,17 @@ class GA:
 		return pop.tolist()
 
 	def fitness(self, solution):
-		i = 0
 		res = 0
-		while i < len(solution):
-			block = str(solution[i]) + str(solution[i+1]) + str(solution[i+2])
-			i += 3
-			if block == '111':
-				res += 80
-			elif block == '000':
-				res += 70
-			elif block == '001':
-				res += 50
-			elif block == '010':
-				res += 49
-			elif block == '100':
-				res += 30
-			elif block == '110':
-				res += 3
-			elif block == '101':
-				res += 2
-			elif block == '011':
-				res += 1
-			return res
+		for i in range(self.num_of_var):
+			if (i%2) == 0:
+				res += solution[i]**2
+			else:
+				res += solution[i]**3
+		return res
 
 	def evaluation(self):
 		fit = np.array([self.fitness(solution) for solution in self.pop])
-		fit = 1/np.exp((fit.max() - fit  + 1 )/self.T)
+		fit = 1/np.exp((fit - fit.min()  + 1 )/self.T)
 		prob = np.array([fit/fit.sum()])
 		prob = prob.reshape(self.pop_size)
 
@@ -132,8 +117,8 @@ class GA:
 
 		for i in range(len(selected_parents_index) - 1):
 			j = selected_parents_index[i+1]
-			child1 = self.multiCrossOver(self.pop[i], self.pop[j])
-			child2 = self.multiCrossOver(self.pop[j], self.pop[i])
+			child1 = self.davisOrderOneChild(self.pop[i], self.pop[j])
+			child2 = self.davisOrderOneChild(self.pop[j], self.pop[i])
 			new_pop.append(child1)
 			new_pop.append(child2)
 

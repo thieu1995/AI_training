@@ -174,7 +174,7 @@ class CRO:
 			all_res.append(res)
 			print("iter:", iter, "best_fit", res)
 		return all_res
-
+"""
 test = CRO(reef_size = [20, 20], po = 0.4, Fb = 0.7, Fa = 0.1, Fd = 0.1, Pd = 0.1, k = 10, problem_fitness = problems.taskFitness,\
  problem_size = 150, init_solution = problems.initTaskSolution, mutation = mutations.swapMutation, crossover = mutations.multiPointCross, num_of_iter = 2000)
 
@@ -196,7 +196,7 @@ plt.xlabel("Generation")
 plt.ylabel("Value")
 plt.show()
 
-
+"""
 
 
 
