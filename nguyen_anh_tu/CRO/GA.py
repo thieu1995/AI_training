@@ -117,8 +117,8 @@ class GA:
 
 		for i in range(len(selected_parents_index) - 1):
 			j = selected_parents_index[i+1]
-			child1 = self.davisOrderOneChild(self.pop[i], self.pop[j])
-			child2 = self.davisOrderOneChild(self.pop[j], self.pop[i])
+			child1 = self.multiCrossOver(self.pop[i], self.pop[j])
+			child2 = self.multiCrossOver(self.pop[j], self.pop[i])
 			new_pop.append(child1)
 			new_pop.append(child2)
 
