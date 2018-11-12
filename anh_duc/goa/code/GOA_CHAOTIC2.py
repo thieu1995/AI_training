@@ -3,10 +3,11 @@ import random
 import time
 import math
 import matplotlib.pyplot as plt
+import os 
 
 '''
 num_dim = number of variables = 50
-number of epochs = 3000, no.generation
+number of epochs = 500, no.generation
 search agents = number of f(x)
 lb = -10, lower bound of variable
 ub = 10, upper bound of variable
@@ -34,8 +35,10 @@ class GOA(object):
     
     # distance between two grasshopper
     def distance(self, X_i, X_j):
-        norm = sum((X_j - X_i) ** 2)
-        return math.sqrt(norm)
+        sum = 0
+        for i in range(self.numDims):
+            sum += (X_i[i] - X_j[i])**2
+        return math.sqrt(sum)
     
     # s_function
     def s_function(self, X_i, X_j):
@@ -55,39 +58,77 @@ class GOA(object):
             if (particle[i] < self.lb): 
                 particle[i] = self.lb
             if (particle[i] > self.ub):
-                particle[i] = np.random.uniform(-10, 10, 1)
-        return particle
+                particle[i] = np.random.uniform(self.lb, self.ub, 1)
+        return particle 
+    
+    # chaotics parameter
+    def gauss_map(self, c):
+        return (1/c) - math.floor(1/c)
 
-    # implement GOA
+    def logistic_map(self, c):
+        p = 4
+        return p * c * (1 - c)
+
+    def sine_map(self, c):
+        p = 1
+        c1 = p * math.sin(math.pi * c)
+        return c1
+
+    def singer_map(self, c):
+        p = 0.98
+        return p * (7.86 * c - 23.31 * math.pow(c, 2) + 28.75 * math.pow(c, 3) - 13.302875 * math.pow(c, 4))
+
+    def sinusoidal_map(self, c):
+        return math.sin(math.pi * c)
+
+    def tent_map(self, c):
+        if (c < 0.5):
+            return 2 * c
+        elif (c >= 0.5):
+            return 2 * (1 - c)
+
+    def cubic_map(self, c):
+        p = 2.59
+        return p * c * (1 - c**2)
+
+    # implement Logistic-GOA
     def implement(self):
-        target = np.zeros(50, dtype=float)
+        # best position so-far
+        target = np.zeros(self.numDims, dtype=float)
         global_best = 25000.0
         t = (self.ub - self.lb) / 2
-        score = np.zeros(3000, dtype=float)
+        score = np.zeros(self.epochs, dtype=float)
         for i in range(self.numAgents):
             if (self.get_fitness(self.Agents[i]) < global_best):
                 global_best = self.get_fitness(self.Agents[i])
                 target = self.Agents[i]
         score[0] = global_best
+
         print("Iter: {}   Best solution: {}".format(0, global_best))
         total_time = 0
-
+        c1 = 0.7
+        c2 = 0.7
+        
         for iter in range(1, self.epochs):
             # time start
             start = time.clock()
-                
             temp = self.Agents
+
             c_max = 1
             c_min = 0.00001
             c = c_max - iter * (c_max - c_min) / self.epochs
-                
+            
+            # select chaotic-map (sine, logistic, etc.)
+            c1 = self.logistic_map(c1)
+            c2 = self.logistic_map(c2)
+            
             for i in range(self.numAgents):
-                agent = np.zeros(50, dtype=float)
+                agent = np.zeros(self.numDims, dtype=float)
                 for j in range(self.numAgents):
                     if (j != i):
-                        agent += self.update(temp[i], temp[j], c, t)
-
-                self.Agents[i] = c * agent + target
+                        agent += self.update(temp[i], temp[j], c1, t)
+                # * np.random.normal(0, 1, self.numDims)
+                self.Agents[i] = c2 * agent + target
                 self.Agents[i] = self.check_out_of_range(self.Agents[i])
                 
             for i in range(self.numAgents):
@@ -108,11 +149,19 @@ if __name__ == "__main__":
     numDims = 50
     ub = 10.0
     lb = -10.0
-    epochs = 3000
+    epochs = 500
+    
     goa = GOA(numAgents, numDims, ub, lb, epochs)
-    score = np.zeros(3000, dtype=float)
+
+    score = np.zeros(epochs, dtype=float)
     score = goa.implement()
-    x = np.arange(3000)
-    plt.plot(x, score)
-    plt.axis([0, 3000, -25000, 0])
+
+    x = np.arange(epochs)
+    plt.plot(x, score, label='CHAOTIC-GOA')
+    
+    plt.xlabel("Number of iterations")
+    plt.ylabel("Best solution so far")
+    plt.legend()
+    plt.title("Function 1")
+    plt.axis([0, epochs, -25000, 0])
     plt.show()

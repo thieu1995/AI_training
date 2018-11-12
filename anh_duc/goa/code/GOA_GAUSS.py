@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 
 '''
 num_dim = number of variables = 50
-number of epochs = 3000, no.generation
+number of epochs = 500, no.generation
 search agents = number of f(x)
 lb = -10, lower bound of variable
 ub = 10, upper bound of variable
@@ -20,7 +20,7 @@ class GOA(object):
         self.ub = ub
         self.lb = lb
         self.epochs = epochs
-        self.Agents = [np.random.uniform(-10, 10, self.numDims) for _ in range(self.numAgents)]
+        self.Agents = [np.random.uniform(lb, ub, self.numDims) for _ in range(self.numAgents)]
         
     # calculate fitness
     def get_fitness(self, particle):
@@ -56,18 +56,20 @@ class GOA(object):
                 particle[i] = self.lb
             if (particle[i] > self.ub):
                 particle[i] = np.random.uniform(-10, 10, 1)
-        return particle
-
+        return particle        
+    
     # implement GOA
     def implement(self):
-        target = np.zeros(50, dtype=float)
+        # best position so-far
+        target = np.zeros(self.numDims, dtype=float)
         global_best = 25000.0
         t = (self.ub - self.lb) / 2
-        score = np.zeros(3000, dtype=float)
+        score = np.zeros(self.epochs, dtype=float)
         for i in range(self.numAgents):
             if (self.get_fitness(self.Agents[i]) < global_best):
                 global_best = self.get_fitness(self.Agents[i])
                 target = self.Agents[i]
+
         score[0] = global_best
         print("Iter: {}   Best solution: {}".format(0, global_best))
         total_time = 0
@@ -75,21 +77,22 @@ class GOA(object):
         for iter in range(1, self.epochs):
             # time start
             start = time.clock()
-                
             temp = self.Agents
+
             c_max = 1
             c_min = 0.00001
             c = c_max - iter * (c_max - c_min) / self.epochs
-                
+            
             for i in range(self.numAgents):
                 agent = np.zeros(50, dtype=float)
                 for j in range(self.numAgents):
                     if (j != i):
                         agent += self.update(temp[i], temp[j], c, t)
-
-                self.Agents[i] = c * agent + target
+                # np.random.normal(0, 1, self.numDims) - normal distribution
+                self.Agents[i] = c * agent * np.random.normal(0, 1, self.numDims) + target
                 self.Agents[i] = self.check_out_of_range(self.Agents[i])
-                
+            
+            # update best position
             for i in range(self.numAgents):
                 if (self.get_fitness(self.Agents[i]) < global_best):
                     global_best = self.get_fitness(self.Agents[i])
@@ -99,6 +102,7 @@ class GOA(object):
             score[iter] = global_best
             finish = time.clock() - start
             total_time += finish
+
         print("Mean time: {}".format(total_time/self.epochs))
         print(target)
         return score
@@ -108,11 +112,11 @@ if __name__ == "__main__":
     numDims = 50
     ub = 10.0
     lb = -10.0
-    epochs = 3000
+    epochs = 500
     goa = GOA(numAgents, numDims, ub, lb, epochs)
-    score = np.zeros(3000, dtype=float)
+    score = np.zeros(epochs, dtype=float)
     score = goa.implement()
-    x = np.arange(3000)
+    x = np.arange(epochs)
     plt.plot(x, score)
-    plt.axis([0, 3000, -25000, 0])
+    plt.axis([0, epochs, -25000, 0])
     plt.show()
