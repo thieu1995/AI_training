@@ -11,23 +11,18 @@ Nếu không pull về sẽ không thể đẩy lên được.
 #### Members 
 - nguyen_thieu        nguyenthieu95   nguyễn văn thiệu (KSTN-K58)
 - hoang_bao           hoangbao123     hoàng nghĩa bảo (KSTN-K59)
-- tran_huy            huytr225        trần huy (HTTT-K59)
+- dao_minh_dung                       Đào Minh Dũng (KSTN-K63)
 
-- hoang_quoc_hao      haok61bkhn      hoàng quốc hảo (KHMT-K61)
-- tran_vu_duc         sad1503         trần vũ đức (VN-K61)
+- anh_duc             anhduc2203      Vũ Anh Đức (CNTT2-K61) 
 - nguyen_anh_tu       anhtuhsp        nguyễn anh tú (VN-K61)
 - ha_viet_tien        tienthegainz    hà việt tiến (VN-K61)
-- bui_thoai           ThanThoai       Bùi Xuân Thoại (CNTT2-K61)
-- anh_duc             anhduc2203      Vũ Anh Đức (CNTT2-K61) 
 - pham_viet_cuong     VP1927          Phạm Việt Cường (VN-K61)
-
-- dao_minh_dung                       Đào Minh Dũng (KSTN-K63)
 
 #### Out members
 - dinh_phien          dinhphien       Đinh Phiên (HTTT-K60)
 - tran_minh_dung      dunghustk60     Trần Minh Dũng (CLC-K60)
 - lanh_khanh          lanhkhanh118    Lành Khánh (KSCLC-HTTT-K60)
-
-
-
-
+- bui_thoai           ThanThoai       Bùi Xuân Thoại (CNTT2-K61)
+- tran_vu_duc         sad1503         trần vũ đức (VN-K61)
+- hoang_quoc_hao      haok61bkhn      hoàng quốc hảo (KHMT-K61)
+- tran_huy            huytr225        trần huy (HTTT-K59)
